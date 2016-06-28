@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title></title>
+<link rel="stylesheet" href="">
+
+</head>
+
+<body>
+
+	<script>
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId : '1743630669182530', // app divertidamente       
+				cookie : true, // enable cookies to allow the server to access the session
+				xfbml : true, // parse social plugins on this page
+				version : 'v2.5' // vivamente usa a versão 2.5
+			});
+			FB.getLoginStatus(function(response) {
+				statusChangeCallback(response);
+			});
+		};
+
+		// Load the SDK asynchronously
+		(function(d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id))
+				return;
+			js = d.createElement(s);
+			js.id = id;
+			js.src = "//connect.facebook.net/pt_BR/sdk.js";
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+
+		// Here we run a very simple test of the Graph API after login is
+		// successful.  See statusChangeCallback() for when this call is made.
+		function testAPI() {
+			console.log('Welcome!  Fetching your information.... ');
+			//FB.api ('me/friends/', function(returnData) {  
+			FB.api('/me', function(response) { //  um método chamado, FB.api (), que envia solicitações para a API Graph em nome do usuário conectado.
+								//console.log('Successful login for: ' + response.name);
+								//console.log(returnData);
+								document.getElementById('status').innerHTML = 'Obrigada por logar: '
+										+ response.name + '!';
+							});
+		}
+
+		function statusChangeCallback(response) {
+			console.log('statusChangeCallback');
+			console.log(response);
+			if (response.status === 'connected') {
+				testAPI();
+			} else if (response.status === 'not_authorized') {
+				document.getElementById('status').innerHTML = 'Por favor entre '
+						+ 'nesse aplicativo.';
+			} else {
+				document.getElementById('status').innerHTML = 'Por favor entre '
+						+ 'no Facebook.';
+			}
+		}
+
+		function checkLoginState() {
+			FB.getLoginStatus(function(response) {
+				statusChangeCallback(response);
+			});
+		}
+
+		function getInfo() {
+			FB.api('me', {fields : 'id,name,posts,likes'}, function(response) {
+				var dataStr = "data:application/octet-stream;charset=utf-8,"
+						+ encodeURIComponent(JSON.stringify(response));
+				var dlAnchorElem = document
+						.getElementById('downloadAnchorElem');
+				dlAnchorElem.setAttribute("href", dataStr);
+				dlAnchorElem.setAttribute("download", "feed.json");
+				dlAnchorElem.click();
+
+			});
+		};
+
+		</script>
+
+
+
+	<button onclick="getInfo()">Obtem dados</button>
+
+
+	<fb:login-button onlogin="checkLoginState();" scope="public_profile,email,user_friends">
+	</fb:login-button>
+
+	<div id="status"></div>
+
+	<a id="downloadAnchorElem" style="display: none"></a>
+
+
+
+	<iframe frameborder="0" height="500" marginheight="0" marginwidth="0"
+		src="https://docs.google.com/forms/d/1QxD0Hw6riFASjdPmq2l9AC0loo72ZsyoHvw6ryHMbWg/viewform?embedded=true"
+		width="760">Carregando…</iframe>
+
+</body>
+</html>
